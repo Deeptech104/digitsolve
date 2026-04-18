@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Calculator - Digitsolve</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            max-width: 320px;
+            margin: 0 auto;
+            background: hsl(var(--bg-glass) / var(--bg-glass-alpha));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid hsl(var(--border) / 0.5);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            box-shadow: var(--shadow-xl);
+        }
+        .calc-display {
+            grid-column: span 4;
+            background: hsl(var(--bg-primary));
+            border: 1px solid hsl(var(--border) / 0.5);
+            border-radius: var(--radius);
+            padding: var(--space-4);
+            text-align: right;
+            font-size: 2rem;
+            font-weight: 600;
+            color: hsl(var(--text-primary));
+            margin-bottom: var(--space-4);
+            min-height: 80px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-end;
+            overflow-x: auto;
+        }
+        .calc-btn {
+            background: hsl(var(--bg-secondary));
+            border: 1px solid hsl(var(--border) / 0.5);
+            color: hsl(var(--text-primary));
+            font-size: 1.25rem;
+            font-weight: 600;
+            padding: 1rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all var(--transition-snappy);
+            box-shadow: var(--shadow-sm);
+        }
+        .calc-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+            border-color: hsl(var(--primary));
+        }
+        .calc-btn:active {
+            transform: scale(0.95);
+        }
+        .calc-btn.operator {
+            background: hsl(var(--primary) / 0.1);
+            color: hsl(var(--primary));
+            border-color: hsl(var(--primary) / 0.3);
+        }
+        .calc-btn.equals {
+            grid-column: span 2;
+            background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-container)));
+            color: white;
+            border: none;
+        }
+        .calc-btn.clear {
+            grid-column: span 2;
+            background: hsl(var(--error) / 0.1);
+            color: hsl(var(--error));
+            border-color: hsl(var(--error) / 0.3);
+        }
+    </style>
+</head>
+<body>
+    <header id="main-header"></header>
+
+    <nav class="breadcrumbs" aria-label="breadcrumb">
+        <div class="container"></div>
+    </nav>
+
+    <main class="container">
+        <section class="calc-page">
+            <h1 style="text-align: center; margin-bottom: var(--space-2);">Basic Calculator</h1>
+            <p style="text-align: center; margin-bottom: var(--space-8); color: hsl(var(--text-secondary));">Simple standard arithmetic calculator.</p>
+
+            <div class="calculator-grid">
+                <div class="calc-display" id="display">0</div>
+                
+                <button class="calc-btn clear" onclick="clearDisplay()">C</button>
+                <button class="calc-btn operator" onclick="appendOperator('/')">÷</button>
+                <button class="calc-btn operator" onclick="appendOperator('*')">×</button>
+                
+                <button class="calc-btn" onclick="appendNumber('7')">7</button>
+                <button class="calc-btn" onclick="appendNumber('8')">8</button>
+                <button class="calc-btn" onclick="appendNumber('9')">9</button>
+                <button class="calc-btn operator" onclick="appendOperator('-')">-</button>
+                
+                <button class="calc-btn" onclick="appendNumber('4')">4</button>
+                <button class="calc-btn" onclick="appendNumber('5')">5</button>
+                <button class="calc-btn" onclick="appendNumber('6')">6</button>
+                <button class="calc-btn operator" onclick="appendOperator('+')">+</button>
+                
+                <button class="calc-btn" onclick="appendNumber('1')">1</button>
+                <button class="calc-btn" onclick="appendNumber('2')">2</button>
+                <button class="calc-btn" onclick="appendNumber('3')">3</button>
+                <button class="calc-btn equals" onclick="calculate()">=</button>
+                
+                <button class="calc-btn" style="grid-column: span 2;" onclick="appendNumber('0')">0</button>
+                <button class="calc-btn" onclick="appendNumber('.')">.</button>
+            </div>
+        </section>
+    </main>
+
+    <footer id="main-footer"></footer>
+
+    <script src="shared.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadHeader();
+            loadFooter();
+            renderBreadcrumbs(['basic']);
+        });
+
+        const display = document.getElementById('display');
+        let currentInput = '0';
+        let previousInput = '';
+        let currentOperator = null;
+        let shouldResetDisplay = false;
+
+        function updateDisplay() {
+            display.textContent = currentInput;
+        }
+
+        function clearDisplay() {
+            currentInput = '0';
+            previousInput = '';
+            currentOperator = null;
+            updateDisplay();
+        }
+
+        function appendNumber(number) {
+            if (currentInput === '0' || shouldResetDisplay) {
+                currentInput = number;
+                shouldResetDisplay = false;
+            } else {
+                currentInput += number;
+            }
+            updateDisplay();
+        }
+
+        function appendOperator(operator) {
+            if (currentOperator !== null) {
+                calculate();
+            }
+            previousInput = currentInput;
+            currentOperator = operator;
+            shouldResetDisplay = true;
+        }
+
+        function calculate() {
+            if (currentOperator === null || shouldResetDisplay) return;
+            
+            let result;
+            const prev = parseFloat(previousInput);
+            const current = parseFloat(currentInput);
+            
+            if (isNaN(prev) || isNaN(current)) return;
+
+            switch (currentOperator) {
+                case '+':
+                    result = prev + current;
+                    break;
+                case '-':
+                    result = prev - current;
+                    break;
+                case '*':
+                    result = prev * current;
+                    break;
+                case '/':
+                    result = current === 0 ? 'Error' : prev / current;
+                    break;
+                default:
+                    return;
+            }
+
+            currentInput = result.toString();
+            currentOperator = null;
+            shouldResetDisplay = true;
+            updateDisplay();
+        }
+    </script>
+</body>
+</html>

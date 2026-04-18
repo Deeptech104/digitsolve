@@ -67,6 +67,10 @@
 
         function initCalculatorGrid() {
             const calculators = [
+                // Basic
+                { id: 'basic', name: 'Basic Calculator', desc: 'Standard arithmetic calculator.', icon: '🧮', category: 'Basic', highlight: true },
+                { id: 'scientific', name: 'Scientific Calculator', desc: 'Advanced math functions.', icon: '🧪', category: 'Basic', highlight: true },
+
                 // Financial
                 { id: 'loan', name: 'Loan Calculator', desc: 'Calculate monthly payments and interest.', icon: '💰', category: 'Financial' },
                 { id: 'mortgage', name: 'Mortgage Calculator', desc: 'Estimate home loan costs.', icon: '🏠', category: 'Financial' },
@@ -85,7 +89,7 @@
                 // Text Tools
                 { id: 'word-count', name: 'Word Counter', desc: 'Count words, characters, sentences.', icon: '📝', category: 'Text Tools' },
                 { id: 'case-converter', name: 'Case Converter', desc: 'Change text case instantly.', icon: '🔤', category: 'Text Tools' },
-                { id: 'qr', name: 'QR Code Generator', desc: 'Generate QR codes from text.', icon: '📱', category: 'Text Tools' }
+                { id: 'password', name: 'Password Generator', desc: 'Create secure random passwords.', icon: '🔑', category: 'Text Tools' }
             ];
 
             renderCalculatorGrid(calculators);
@@ -109,8 +113,9 @@
                 catSection.innerHTML = `<h3>${category}</h3><div class="cards-row">`;
 
                 items.forEach(calc => {
+                    const highlightClass = calc.highlight ? 'highlight-card' : '';
                     catSection.querySelector('.cards-row').innerHTML += `
-                        <a href="${calc.id}.html" class="calc-card">
+                        <a href="${calc.id}.html" class="calc-card ${highlightClass}">
                             <div class="calc-icon">${calc.icon}</div>
                             <h4>${calc.name}</h4>
                             <p>${calc.desc}</p>

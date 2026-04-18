@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scientific Calculator - Digitsolve</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .scientific-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            max-width: 450px;
+            margin: 0 auto;
+            background: hsl(var(--bg-glass) / var(--bg-glass-alpha));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid hsl(var(--border) / 0.5);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            box-shadow: var(--shadow-xl);
+        }
+        .calc-display {
+            grid-column: span 5;
+            background: hsl(var(--bg-primary));
+            border: 1px solid hsl(var(--border) / 0.5);
+            border-radius: var(--radius);
+            padding: var(--space-4);
+            text-align: right;
+            font-size: 2rem;
+            font-weight: 600;
+            color: hsl(var(--text-primary));
+            margin-bottom: var(--space-4);
+            min-height: 80px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-end;
+            overflow-x: auto;
+        }
+        .calc-btn {
+            background: hsl(var(--bg-secondary));
+            border: 1px solid hsl(var(--border) / 0.5);
+            color: hsl(var(--text-primary));
+            font-size: 1.1rem;
+            font-weight: 600;
+            padding: 0.8rem 0.5rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all var(--transition-snappy);
+            box-shadow: var(--shadow-sm);
+        }
+        .calc-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+            border-color: hsl(var(--primary));
+        }
+        .calc-btn:active {
+            transform: scale(0.95);
+        }
+        .calc-btn.operator {
+            background: hsl(var(--primary) / 0.1);
+            color: hsl(var(--primary));
+            border-color: hsl(var(--primary) / 0.3);
+        }
+        .calc-btn.func {
+            background: hsl(var(--secondary) / 0.2);
+            color: hsl(var(--text-primary));
+            border-color: hsl(var(--border) / 0.5);
+            font-size: 0.9rem;
+        }
+        .calc-btn.equals {
+            grid-column: span 2;
+            background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-container)));
+            color: white;
+            border: none;
+        }
+        .calc-btn.clear {
+            grid-column: span 2;
+            background: hsl(var(--error) / 0.1);
+            color: hsl(var(--error));
+            border-color: hsl(var(--error) / 0.3);
+        }
+    </style>
+</head>
+<body>
+    <header id="main-header"></header>
+
+    <nav class="breadcrumbs" aria-label="breadcrumb">
+        <div class="container"></div>
+    </nav>
+
+    <main class="container">
+        <section class="calc-page">
+            <h1 style="text-align: center; margin-bottom: var(--space-2);">Scientific Calculator</h1>
+            <p style="text-align: center; margin-bottom: var(--space-8); color: hsl(var(--text-secondary));">Advanced functions for complex calculations.</p>
+
+            <div class="scientific-grid">
+                <div class="calc-display" id="display">0</div>
+                
+                <button class="calc-btn func" onclick="calculateFunc('sin')">sin</button>
+                <button class="calc-btn func" onclick="calculateFunc('cos')">cos</button>
+                <button class="calc-btn func" onclick="calculateFunc('tan')">tan</button>
+                <button class="calc-btn func" onclick="appendNumber(Math.PI)">π</button>
+                <button class="calc-btn clear" onclick="clearDisplay()">AC</button>
+                
+                <button class="calc-btn func" onclick="calculateFunc('asin')">sin⁻¹</button>
+                <button class="calc-btn func" onclick="calculateFunc('acos')">cos⁻¹</button>
+                <button class="calc-btn func" onclick="calculateFunc('atan')">tan⁻¹</button>
+                <button class="calc-btn func" onclick="appendNumber(Math.E)">e</button>
+                <button class="calc-btn operator" onclick="appendOperator('/')">÷</button>
+
+                <button class="calc-btn func" onclick="calculateFunc('log')">log</button>
+                <button class="calc-btn" onclick="appendNumber('7')">7</button>
+                <button class="calc-btn" onclick="appendNumber('8')">8</button>
+                <button class="calc-btn" onclick="appendNumber('9')">9</button>
+                <button class="calc-btn operator" onclick="appendOperator('*')">×</button>
+
+                <button class="calc-btn func" onclick="calculateFunc('ln')">ln</button>
+                <button class="calc-btn" onclick="appendNumber('4')">4</button>
+                <button class="calc-btn" onclick="appendNumber('5')">5</button>
+                <button class="calc-btn" onclick="appendNumber('6')">6</button>
+                <button class="calc-btn operator" onclick="appendOperator('-')">-</button>
+
+                <button class="calc-btn func" onclick="calculateFunc('sqrt')">√x</button>
+                <button class="calc-btn" onclick="appendNumber('1')">1</button>
+                <button class="calc-btn" onclick="appendNumber('2')">2</button>
+                <button class="calc-btn" onclick="appendNumber('3')">3</button>
+                <button class="calc-btn operator" onclick="appendOperator('+')">+</button>
+
+                <button class="calc-btn func" onclick="appendOperator('^')">x^y</button>
+                <button class="calc-btn func" onclick="calculateFunc('sq')">x²</button>
+                <button class="calc-btn" onclick="appendNumber('0')">0</button>
+                <button class="calc-btn" onclick="appendNumber('.')">.</button>
+                <button class="calc-btn equals" style="grid-column: 5;" onclick="calculate()">=</button>
+            </div>
+        </section>
+    </main>
+
+    <footer id="main-footer"></footer>
+
+    <script src="shared.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadHeader();
+            loadFooter();
+            renderBreadcrumbs(['scientific']);
+        });
+
+        const display = document.getElementById('display');
+        let currentInput = '0';
+        let previousInput = '';
+        let currentOperator = null;
+        let shouldResetDisplay = false;
+
+        function updateDisplay() {
+            // Keep length manageable
+            if(currentInput.length > 15) {
+                display.textContent = parseFloat(currentInput).toExponential(5);
+            } else {
+                display.textContent = currentInput;
+            }
+        }
+
+        function clearDisplay() {
+            currentInput = '0';
+            previousInput = '';
+            currentOperator = null;
+            updateDisplay();
+        }
+
+        function appendNumber(number) {
+            number = number.toString();
+            if (currentInput === '0' || shouldResetDisplay) {
+                currentInput = number;
+                shouldResetDisplay = false;
+            } else {
+                currentInput += number;
+            }
+            updateDisplay();
+        }
+
+        function appendOperator(operator) {
+            if (currentOperator !== null) {
+                calculate();
+            }
+            previousInput = currentInput;
+            currentOperator = operator;
+            shouldResetDisplay = true;
+        }
+
+        function calculateFunc(func) {
+            let val = parseFloat(currentInput);
+            if(isNaN(val)) return;
+            
+            switch(func) {
+                case 'sin': val = Math.sin(val * Math.PI / 180); break; // Assuming degrees for simplicity
+                case 'cos': val = Math.cos(val * Math.PI / 180); break;
+                case 'tan': val = Math.tan(val * Math.PI / 180); break;
+                case 'asin': val = Math.asin(val) * 180 / Math.PI; break;
+                case 'acos': val = Math.acos(val) * 180 / Math.PI; break;
+                case 'atan': val = Math.atan(val) * 180 / Math.PI; break;
+                case 'log': val = Math.log10(val); break;
+                case 'ln': val = Math.log(val); break;
+                case 'sqrt': val = Math.sqrt(val); break;
+                case 'sq': val = Math.pow(val, 2); break;
+            }
+            // Fix small floating point errors
+            if(Math.abs(val) < 1e-10) val = 0;
+            
+            currentInput = val.toString();
+            shouldResetDisplay = true;
+            updateDisplay();
+        }
+
+        function calculate() {
+            if (currentOperator === null || shouldResetDisplay) return;
+            
+            let result;
+            const prev = parseFloat(previousInput);
+            const current = parseFloat(currentInput);
+            
+            if (isNaN(prev) || isNaN(current)) return;
+
+            switch (currentOperator) {
+                case '+':
+                    result = prev + current;
+                    break;
+                case '-':
+                    result = prev - current;
+                    break;
+                case '*':
+                    result = prev * current;
+                    break;
+                case '/':
+                    result = current === 0 ? 'Error' : prev / current;
+                    break;
+                case '^':
+                    result = Math.pow(prev, current);
+                    break;
+                default:
+                    return;
+            }
+
+            currentInput = result.toString();
+            currentOperator = null;
+            shouldResetDisplay = true;
+            updateDisplay();
+        }
+    </script>
+</body>
+</html>
