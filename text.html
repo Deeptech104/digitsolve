@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Tools - Digitsolve</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header id="main-header"></header>
+
+    <nav class="breadcrumbs" aria-label="breadcrumb">
+        <div class="container"></div>
+    </nav>
+
+    <main class="container">
+        <section class="calc-page">
+            <h1>Text Tools</h1>
+            <p>Text processing utilities.</p>
+
+            <div class="cards-row">
+                <a href="word-count.html" class="calc-card">
+                    <div class="calc-icon">📝</div>
+                    <h4>Word Counter</h4>
+                    <p>Text statistics</p>
+                </a>
+                <a href="case-converter.html" class="calc-card">
+                    <div class="calc-icon">🔤</div>
+                    <h4>Case Converter</h4>
+                    <p>Multiple formats</p>
+                </a>
+                <a href="qr.html" class="calc-card">
+                    <div class="calc-icon">📱</div>
+                    <h4>QR Code Generator</h4>
+                    <p>Instant QR codes</p>
+                </a>
+            </div>
+
+            <div style="text-align: center; margin-top: 2rem;">
+                <a href="index.html" class="btn btn-secondary">← Back to Home</a>
+            </div>
+        </section>
+    </main>
+
+    <footer id="main-footer"></footer>
+
+    <script src="shared.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadHeader();
+            loadFooter();
+            renderBreadcrumbs(['text']);
+        });
+    </script>
+</body>
+</html>

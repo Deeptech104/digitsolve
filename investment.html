@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Return Calculator - Digitsolve</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header id="main-header"></header>
+
+    <nav class="breadcrumbs" aria-label="breadcrumb">
+        <div class="container"></div>
+    </nav>
+
+    <main class="container">
+        <section class="calc-page">
+            <h1>Investment Return Calculator</h1>
+            <p>Project future value of your investments with compound interest.</p>
+
+            <form class="input-group">
+                <label>Initial Investment ($)</label>
+                <input type="number" id="initial" min="0" step="0.01" required>
+
+                <label>Annual Contribution ($)</label>
+                <input type="number" id="contribution" min="0" step="0.01" value="0" required>
+
+                <label>Annual Return Rate (%)</label>
+                <input type="number" id="rate" min="0" max="50" step="0.01" value="7" required>
+
+                <label>Investment Period (Years)</label>
+                <input type="number" id="years" min="1" max="100" value="10" required>
+
+                <label>Compounding Frequency</label>
+                <select id="frequency">
+                    <option value="12">Monthly</option>
+                    <option value="4">Quarterly</option>
+                    <option value="1">Annually</option>
+                </select>
+
+                <button type="button" class="btn">Calculate Future Value</button>
+            </form>
+
+            <div id="result-box" class="result-box" style="display: none;">
+                <h3>Investment Projection</h3>
+                <div class="result-item">
+                    <strong>Future Value:</strong> <span id="future-value">-</span>
+                </div>
+                <div class="result-item">
+                    <strong>Total Contributions:</strong> <span id="total-contributions">-</span>
+                </div>
+                <div class="result-item">
+                    <strong>Total Growth:</strong> <span id="total-growth">-</span>
+                </div>
+                <button type="button" id="copy-results" class="btn btn-secondary">Copy Results</button>
+            </div>
+        </section>
+    </main>
+
+    <footer id="main-footer"></footer>
+
+    <script src="shared.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadHeader();
+            loadFooter();
+            renderBreadcrumbs(['investment']);
+
+            const form = document.querySelector('.input-group');
+            const resultBox = document.getElementById('result-box');
+            const copyBtn = document.getElementById('copy-results');
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                calculateInvestment();
+            });
+
+            copyBtn.addEventListener('click', function() {
+                const results = `Future Value: ${document.getElementById('future-value').textContent}\nTotal Contributions: ${document.getElementById('total-contributions').textContent}\nTotal Growth: ${document.getElementById('total-growth').textContent}`;
+                copyToClipboard(results);
+            });
+
+            function calculateInvestment() {
+                const initial = parseFloat(document.getElementById('initial').value);
+                const contribution = parseFloat(document.getElementById('contribution').value);
+                const rate = parseFloat(document.getElementById('rate').value) / 100;
+                const years = parseInt(document.getElementById('years').value);
+                const frequency = parseInt(document.getElementById('frequency').value);
+                
+                const periods = years * frequency;
+                const periodRate = rate / frequency;
+                const periodContribution = contribution / frequency;
+
+                let futureValue = initial;
+                
+                // Compound initial investment
+                futureValue *= Math.pow(1 + periodRate, periods);
+                
+                // Add contributions
+                for (let i = 1; i <= periods; i++) {
+                    futureValue = (futureValue + periodContribution) * Math.pow(1 + periodRate, periods - i + 1);
+                }
+
+                const totalContributions = initial + (contribution * years);
+                const totalGrowth = futureValue - totalContributions;
+
+                document.getElementById('future-value').textContent = formatNumber(futureValue);
+                document.getElementById('total-contributions').textContent = formatNumber(totalContributions);
+                document.getElementById('total-growth').textContent = formatNumber(totalGrowth);
+                resultBox.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator - Digitsolve</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body>
+    <header id="main-header"></header>
+
+    <nav class="breadcrumbs" aria-label="breadcrumb">
+        <div class="container"></div>
+    </nav>
+
+    <main class="container">
+        <section class="calc-page">
+            <h1>QR Code Generator</h1>
+            <p>Generate QR codes from text, URLs, or contact info instantly.</p>
+
+            <div class="input-group">
+                <label>Enter text or URL:</label>
+                <textarea id="qr-input" rows="4" placeholder="https://digitsolve.com or any text..."></textarea>
+
+                <div style="display: flex; gap: 1rem; margin: 1rem 0; flex-wrap: wrap;">
+                    <button type="button" id="generate-qr" class="btn">Generate QR</button>
+                    <button type="button" id="download-qr" class="btn btn-secondary" style="display: none;">Download PNG</button>
+                    <button type="button" id="copy-qr" class="btn btn-secondary" style="display: none;">Copy to Clipboard</button>
+                </div>
+
+                <label>QR Size (pixels)</label>
+                <input type="range" id="qr-size" min="128" max="512" value="256">
+                <span id="size-display">256px</span>
+            </div>
+
+            <div id="qr-container" style="text-align: center; display: none; margin: 2rem 0;">
+                <canvas id="qr-canvas"></canvas>
+                <p id="qr-text"></p>
+            </div>
+        </section>
+    </main>
+
+    <footer id="main-footer"></footer>
+
+    <script src="shared.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadHeader();
+            loadFooter();
+            renderBreadcrumbs(['qr']);
+
+            const qrInput = document.getElementById('qr-input');
+            const qrContainer = document.getElementById('qr-container');
+            const qrCanvas = document.getElementById('qr-canvas');
+            const qrText = document.getElementById('qr-text');
+            const generateBtn = document.getElementById('generate-qr');
+            const downloadBtn = document.getElementById('download-qr');
+            const copyBtn = document.getElementById('copy-qr');
+            const sizeSlider = document.getElementById('qr-size');
+            const sizeDisplay = document.getElementById('size-display');
+
+            sizeSlider.addEventListener('input', function() {
+                sizeDisplay.textContent = this.value + 'px';
+            });
+
+            generateBtn.addEventListener('click', generateQR);
+            qrInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && e.ctrlKey) generateQR();
+            });
+
+            downloadBtn.addEventListener('click', downloadQR);
+            copyBtn.addEventListener('click', copyQR);
+
+            function generateQR() {
+                const text = qrInput.value.trim();
+                if (!text) {
+                    alert('Please enter text to generate QR code.');
+                    return;
+                }
+
+                const size = parseInt(sizeSlider.value);
+                
+                QRCode.toCanvas(qrCanvas, text, {
+                    width: size,
+                    margin: 1,
+                    color: {
+                        dark: '#000000',
+                        light: '#FFFFFF'
+                    }
+                }, function(error) {
+                    if (error) {
+                        console.error(error);
+                        return;
+                    }
+                    qrText.textContent = text;
+                    qrContainer.style.display = 'block';
+                    downloadBtn.style.display = 'inline-flex';
+                    copyBtn.style.display = 'inline-flex';
+                    qrCanvas.scrollIntoView({ behavior: 'smooth' });
+                });
+            }
+
+            function downloadQR() {
+                const link = document.createElement('a');
+                link.download = 'digitsolve-qr.png';
+                link.href = qrCanvas.toDataURL();
+                link.click();
+            }
+
+            function copyQR() {
+                // Convert canvas to image data and copy
+                const image = new Image();
+                image.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = image.width;
+                    canvas.height = image.height;
+                    ctx.drawImage(image, 0, 0);
+                    canvas.toBlob(function(blob) {
+                        navigator.clipboard.write([new ClipboardItem({'image/png': blob})]);
+                    });
+                };
+                image.src = qrCanvas.toDataURL();
+            }
+        });
+    </script>
+</body>
+</html>

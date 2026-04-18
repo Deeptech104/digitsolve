@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calorie Calculator - Digitsolve</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header id="main-header"></header>
+
+    <nav class="breadcrumbs" aria-label="breadcrumb">
+        <div class="container"></div>
+    </nav>
+
+    <main class="container">
+        <section class="calc-page">
+            <h1>Daily Calorie Needs</h1>
+            <p>Calculate your daily calorie requirements based on BMR and activity level.</p>
+
+            <form class="input-group">
+                <label>Gender</label>
+                <select id="gender" required>
+                    <option value="">Select...</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                </select>
+
+                <label>Age (years)</label>
+                <input type="number" id="age" min="10" max="120" required>
+
+                <label>Weight (kg)</label>
+                <input type="number" id="weight" min="30" max="300" step="0.1" required>
+
+                <label>Height (cm)</label>
+                <input type="number" id="height" min="100" max="250" step="0.1" required>
+
+                <label>Activity Level</label>
+                <select id="activity" required>
+                    <option value="">Select...</option>
+                    <option value="1.2">Sedentary</option>
+                    <option value="1.375">Lightly Active</option>
+                    <option value="1.55">Moderately Active</option>
+                    <option value="1.725">Very Active</option>
+                    <option value="1.9">Super Active</option>
+                </select>
+
+                <label>Goal</label>
+                <select id="goal" required>
+                    <option value="1">Maintain Weight</option>
+                    <option value="0.9">Mild Weight Loss</option>
+                    <option value="0.8">Weight Loss</option>
+                    <option value="1.1">Mild Weight Gain</option>
+                    <option value="1.2">Weight Gain</option>
+                </select>
+
+                <button type="button" class="btn">Calculate Calories</button>
+            </form>
+
+            <div id="result-box" class="result-box" style="display: none;">
+                <h3>Daily Calorie Needs</h3>
+                <div class="result-item">
+                    <strong>BMR (Basal Metabolic Rate):</strong> <span id="bmr">-</span>
+                </div>
+                <div class="result-item">
+                    <strong>Maintenance Calories:</strong> <span id="maintenance">-</span>
+                </div>
+                <div class="result-item">
+                    <strong>Goal Calories:</strong> <span id="goal-calories">-</span>
+                </div>
+                <button type="button" id="copy-results" class="btn btn-secondary">Copy Results</button>
+            </div>
+        </section>
+    </main>
+
+    <footer id="main-footer"></footer>
+
+    <script src="shared.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadHeader();
+            loadFooter();
+            renderBreadcrumbs(['calorie']);
+
+            const form = document.querySelector('.input-group');
+            const resultBox = document.getElementById('result-box');
+            const copyBtn = document.getElementById('copy-results');
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                calculateCalories();
+            });
+
+            copyBtn.addEventListener('click', function() {
+                const results = `BMR: ${document.getElementById('bmr').textContent}\nMaintenance: ${document.getElementById('maintenance').textContent}\nGoal: ${document.getElementById('goal-calories').textContent}`;
+                copyToClipboard(results);
+            });
+
+            function calculateCalories() {
+                const gender = document.getElementById('gender').value;
+                const age = parseFloat(document.getElementById('age').value);
+                const weight = parseFloat(document.getElementById('weight').value);
+                const height = parseFloat(document.getElementById('height').value);
+                const activity = parseFloat(document.getElementById('activity').value);
+                const goal = parseFloat(document.getElementById('goal').value);
+
+                if (!gender || isNaN(age) || isNaN(weight) || isNaN(height) || isNaN(activity) || isNaN(goal)) {
+                    alert('Please fill all fields.');
+                    return;
+                }
+
+                // Harris-Benedict BMR formula
+                let bmr;
+                if (gender === 'male') {
+                    bmr = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
+                } else {
+                    bmr = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
+                }
+
+                const maintenance = bmr * activity;
+                const goalCalories = maintenance * goal;
+
+                document.getElementById('bmr').textContent = Math.round(bmr);
+                document.getElementById('maintenance').textContent = Math.round(maintenance);
+                document.getElementById('goal-calories').textContent = Math.round(goalCalories);
+                resultBox.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

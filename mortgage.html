@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mortgage Calculator - Digitsolve</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header id="main-header"></header>
+
+    <nav class="breadcrumbs" aria-label="breadcrumb">
+        <div class="container"></div>
+    </nav>
+
+    <main class="container">
+        <section class="calc-page">
+            <h1>Mortgage Calculator</h1>
+            <p>Estimate your monthly mortgage payments including principal and interest.</p>
+
+            <form class="input-group">
+                <label>Home Price ($)</label>
+                <input type="number" id="home-price" min="0" step="0.01" required>
+
+                <label>Down Payment (%)</label>
+                <input type="number" id="down-payment" min="0" max="50" step="0.01" value="20" required>
+
+                <label>Loan Term (Years)</label>
+                <input type="number" id="years" min="1" max="50" value="30" required>
+
+                <label>Annual Interest Rate (%)</label>
+                <input type="number" id="rate" min="0" max="20" step="0.01" value="6.5" required>
+                
+                <button type="button" class="btn">Calculate Mortgage</button>
+            </form>
+
+            <div id="result-box" class="result-box" style="display: none;">
+                <h3>Mortgage Results</h3>
+                <div class="result-item">
+                    <strong>Loan Amount:</strong> <span id="loan-amount">-</span>
+                </div>
+                <div class="result-item">
+                    <strong>Monthly Payment:</strong> <span id="monthly-payment">-</span>
+                </div>
+                <div class="result-item">
+                    <strong>Total Payment:</strong> <span id="total-payment">-</span>
+                </div>
+                <button type="button" id="copy-results" class="btn btn-secondary">Copy Results</button>
+            </div>
+        </section>
+    </main>
+
+    <footer id="main-footer"></footer>
+
+    <script src="shared.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadHeader();
+            loadFooter();
+            renderBreadcrumbs(['mortgage']);
+
+            const form = document.querySelector('.input-group');
+            const resultBox = document.getElementById('result-box');
+            const copyBtn = document.getElementById('copy-results');
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                calculateMortgage();
+            });
+
+            copyBtn.addEventListener('click', function() {
+                const results = `Loan Amount: ${document.getElementById('loan-amount').textContent}\nMonthly Payment: ${document.getElementById('monthly-payment').textContent}\nTotal Payment: ${document.getElementById('total-payment').textContent}`;
+                copyToClipboard(results);
+            });
+
+            function calculateMortgage() {
+                const homePrice = parseFloat(document.getElementById('home-price').value);
+                const downPaymentPct = parseFloat(document.getElementById('down-payment').value) / 100;
+                const years = parseInt(document.getElementById('years').value);
+                const annualRate = parseFloat(document.getElementById('rate').value) / 100;
+                
+                const downPayment = homePrice * downPaymentPct;
+                const loanAmount = homePrice - downPayment;
+                const months = years * 12;
+                const monthlyRate = annualRate / 12;
+
+                const monthlyPayment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1);
+                const totalPayment = monthlyPayment * months;
+
+                document.getElementById('loan-amount').textContent = formatNumber(loanAmount);
+                document.getElementById('monthly-payment').textContent = formatNumber(monthlyPayment);
+                document.getElementById('total-payment').textContent = formatNumber(totalPayment);
+                resultBox.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

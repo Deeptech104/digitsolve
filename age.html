@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Calculator - Digitsolve</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header id="main-header"></header>
+
+    <nav class="breadcrumbs" aria-label="breadcrumb">
+        <div class="container"></div>
+    </nav>
+
+    <main class="container">
+        <section class="calc-page">
+            <h1>Age Calculator</h1>
+            <p>Calculate exact age in years, months, days, weeks, and more.</p>
+
+            <form class="input-group">
+                <label>Birth Date</label>
+                <input type="date" id="birthdate" required>
+
+                <label>Calculate Age On</label>
+                <input type="date" id="target-date" required>
+
+                <button type="button" class="btn">Calculate Age</button>
+            </form>
+
+            <div id="result-box" class="result-box" style="display: none;">
+                <h3>Exact Age</h3>
+                <div class="result-item">
+                    <strong>Years:</strong> <span id="years">-</span>
+                </div>
+                <div class="result-item">
+                    <strong>Months:</strong> <span id="months">-</span>
+                </div>
+                <div class="result-item">
+                    <strong>Days:</strong> <span id="days">-</span>
+                </div>
+                <div class="result-item">
+                    <strong>Weeks:</strong> <span id="weeks">-</span>
+                </div>
+                <div class="result-item">
+                    <strong>Total Days:</strong> <span id="total-days">-</span>
+                </div>
+                <button type="button" id="copy-results" class="btn btn-secondary">Copy Results</button>
+            </div>
+        </section>
+    </main>
+
+    <footer id="main-footer"></footer>
+
+    <script src="shared.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadHeader();
+            loadFooter();
+            renderBreadcrumbs(['age']);
+
+            // Set default target date to today
+            document.getElementById('target-date').valueAsDate = new Date();
+
+            const form = document.querySelector('.input-group');
+            const resultBox = document.getElementById('result-box');
+            const copyBtn = document.getElementById('copy-results');
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                calculateAge();
+            });
+
+            copyBtn.addEventListener('click', function() {
+                const results = `Age on ${document.getElementById('target-date').value}:\n${document.getElementById('years').textContent} years, ${document.getElementById('months').textContent} months, ${document.getElementById('days').textContent} days`;
+                copyToClipboard(results);
+            });
+
+            function calculateAge() {
+                const birthDate = new Date(document.getElementById('birthdate').value);
+                const targetDate = new Date(document.getElementById('target-date').value);
+
+                if (isNaN(birthDate) || isNaN(targetDate) || birthDate >= targetDate) {
+                    alert('Please enter valid dates with birth date before target date.');
+                    return;
+                }
+
+                const diffTime = targetDate - birthDate;
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                const years = Math.floor(diffDays / 365.25);
+                const remainingDays = diffDays % 365;
+                const months = Math.floor(remainingDays / 30.4375); // Average month length
+                const days = Math.floor((remainingDays % 30.4375));
+
+                document.getElementById('years').textContent = years;
+                document.getElementById('months').textContent = months;
+                document.getElementById('days').textContent = days;
+                document.getElementById('weeks').textContent = Math.round(diffDays / 7);
+                document.getElementById('total-days').textContent = diffDays.toLocaleString();
+                resultBox.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

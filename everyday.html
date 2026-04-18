@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Everyday Calculators - Digitsolve</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header id="main-header"></header>
+
+    <nav class="breadcrumbs" aria-label="breadcrumb">
+        <div class="container"></div>
+    </nav>
+
+    <main class="container">
+        <section class="calc-page">
+            <h1>Everyday Calculators</h1>
+            <p>Useful tools for daily life.</p>
+
+            <div class="cards-row">
+                <a href="tip.html" class="calc-card">
+                    <div class="calc-icon">🍽️</div>
+                    <h4>Tip Calculator</h4>
+                    <p>Split bills easily</p>
+                </a>
+                <a href="age.html" class="calc-card">
+                    <div class="calc-icon">🎂</div>
+                    <h4>Age Calculator</h4>
+                    <p>Exact age</p>
+                </a>
+                <a href="date-diff.html" class="calc-card">
+                    <div class="calc-icon">📅</div>
+                    <h4>Date Difference</h4>
+                    <p>Days between dates</p>
+                </a>
+            </div>
+
+            <div style="text-align: center; margin-top: 2rem;">
+                <a href="index.html" class="btn btn-secondary">← Back to Home</a>
+            </div>
+        </section>
+    </main>
+
+    <footer id="main-footer"></footer>
+
+    <script src="shared.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadHeader();
+            loadFooter();
+            renderBreadcrumbs(['everyday']);
+        });
+    </script>
+</body>
+</html>

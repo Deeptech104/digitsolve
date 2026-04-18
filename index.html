@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digitsolve - Free Online Calculators</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header id="main-header">
+        <!-- Header will be loaded by JS -->
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <h1>Online Calculators for Everyday Needs</h1>
+                <p class="hero-subtitle">Fast, accurate, and free tools for financial, health, everyday calculations, and more.</p>
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="Search calculators...">
+                </div>
+            </div>
+        </section>
+
+        <!-- Calculator Grid -->
+        <section class="calculators-grid" id="calc-grid">
+            <div class="container">
+                <!-- Cards will be populated by JS for filtering -->
+            </div>
+        </section>
+
+        <!-- Why Use Us Section -->
+        <section class="why-us">
+            <div class="container">
+                <h2>Why Use Digitsolve Calculators?</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <h3>Fast</h3>
+                        <p>Instant results without downloads or signups.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Accurate</h3>
+                        <p>Precise calculations powered by reliable algorithms.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Free</h3>
+                        <p>Always free, no hidden fees or subscriptions.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="main-footer">
+        <!-- Footer will be loaded by JS -->
+    </footer>
+
+    <script src="shared.js"></script>
+    <script>
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadHeader();
+            loadFooter();
+            initCalculatorGrid();
+        });
+
+        function initCalculatorGrid() {
+            const calculators = [
+                // Financial
+                { id: 'loan', name: 'Loan Calculator', desc: 'Calculate monthly payments and interest.', icon: '💰', category: 'Financial' },
+                { id: 'mortgage', name: 'Mortgage Calculator', desc: 'Estimate home loan costs.', icon: '🏠', category: 'Financial' },
+                { id: 'investment', name: 'Investment Return', desc: 'Project future investment growth.', icon: '📈', category: 'Financial' },
+
+                // Health
+                { id: 'bmi', name: 'BMI Calculator', desc: 'Calculate your Body Mass Index.', icon: '⚕️', category: 'Health' },
+                { id: 'calorie', name: 'Calorie Needs', desc: 'Daily calorie requirements.', icon: '🍎', category: 'Health' },
+                { id: 'heart-rate', name: 'Max Heart Rate', desc: 'Target heart rate zones.', icon: '❤️', category: 'Health' },
+
+                // Everyday
+                { id: 'tip', name: 'Tip Calculator', desc: 'Calculate restaurant tips.', icon: '🍽️', category: 'Everyday' },
+                { id: 'age', name: 'Age Calculator', desc: 'Exact age in years, months, days.', icon: '🎂', category: 'Everyday' },
+                { id: 'date-diff', name: 'Date Difference', desc: 'Days between two dates.', icon: '📅', category: 'Everyday' },
+
+                // Text Tools
+                { id: 'word-count', name: 'Word Counter', desc: 'Count words, characters, sentences.', icon: '📝', category: 'Text Tools' },
+                { id: 'case-converter', name: 'Case Converter', desc: 'Change text case instantly.', icon: '🔤', category: 'Text Tools' },
+                { id: 'qr', name: 'QR Code Generator', desc: 'Generate QR codes from text.', icon: '📱', category: 'Text Tools' }
+            ];
+
+            renderCalculatorGrid(calculators);
+            setupSearch();
+        }
+
+        function renderCalculatorGrid(calculators) {
+            const grid = document.querySelector('#calc-grid .container');
+            const categories = {};
+
+            // Group by category
+            calculators.forEach(calc => {
+                if (!categories[calc.category]) categories[calc.category] = [];
+                categories[calc.category].push(calc);
+            });
+
+            // Render category groups
+            Object.entries(categories).forEach(([category, items]) => {
+                const catSection = document.createElement('div');
+                catSection.className = 'category-group';
+                catSection.innerHTML = `<h3>${category}</h3><div class="cards-row">`;
+
+                items.forEach(calc => {
+                    catSection.querySelector('.cards-row').innerHTML += `
+                        <a href="${calc.id}.html" class="calc-card">
+                            <div class="calc-icon">${calc.icon}</div>
+                            <h4>${calc.name}</h4>
+                            <p>${calc.desc}</p>
+                            <button class="open-btn">Open</button>
+                        </a>
+                    `;
+                });
+
+                catSection.innerHTML += '</div>';
+                grid.appendChild(catSection);
+            });
+        }
+
+        function setupSearch() {
+            const searchInput = document.getElementById('search-input');
+            searchInput.addEventListener('input', function() {
+                filterCalculators(this.value);
+            });
+        }
+
+        function filterCalculators(query) {
+            // Implemented in shared.js
+            performSearch(query);
+        }
+    </script>
+</body>
+</html>

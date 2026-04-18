@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Digitsolve</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-8);
+            margin-top: var(--space-8);
+        }
+
+        .team-member {
+            text-align: center;
+        }
+
+        .team-member img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: var(--space-4);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .team-member h3 {
+            font-size: 1.25rem;
+            margin-bottom: var(--space-2);
+        }
+
+        .team-member p {
+            color: hsl(var(--text-secondary));
+        }
+    </style>
+</head>
+<body>
+    <header id="main-header">
+        <!-- Header will be loaded by JS -->
+    </header>
+
+    <main class="container calc-page">
+        <section>
+            <h1>About Digitsolve</h1>
+            <p class="hero-subtitle">Digitsolve is a project dedicated to providing high-quality, free online calculators for a wide range of needs. Our goal is to make calculations simple and accessible to everyone.</p>
+        </section>
+
+        <section class="input-group">
+            <h2>Our Mission</h2>
+            <p>Our mission is to empower users with fast, accurate, and easy-to-use tools for everyday calculations. We believe that everyone should have access to the tools they need to make informed decisions, whether it's for financial planning, health and fitness, or educational purposes.</p>
+        </section>
+
+        <section class="input-group">
+            <h2>Our Team</h2>
+            <p>We are a small team of developers and designers who are passionate about creating useful and beautiful tools for the web. We are constantly working to improve our calculators and add new ones to our collection.</p>
+            <div class="team-grid">
+                <div class="team-member">
+                    <img src="https://i.ibb.co/28J65pL/photo-2024-04-18-20-44-12.jpg" alt="Team Member 1">
+                    <h3>Alex Johnson</h3>
+                    <p>Lead Developer</p>
+                </div>
+                <div class="team-member">
+                    <img src="https://i.ibb.co/NCvCPG7/photo-2024-04-18-20-44-10.jpg" alt="Team Member 2">
+                    <h3>Jane Doe</h3>
+                    <p>UI/UX Designer</p>
+                </div>
+                <div class="team-member">
+                    <img src="https://i.ibb.co/28J65pL/photo-2024-04-18-20-44-12.jpg" alt="Team Member 3">
+                    <h3>Peter Jones</h3>
+                    <p>Frontend Developer</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="main-footer">
+        <!-- Footer will be loaded by JS -->
+    </footer>
+
+    <script src="shared.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadHeader();
+            loadFooter();
+        });
+    </script>
+</body>
+</html>

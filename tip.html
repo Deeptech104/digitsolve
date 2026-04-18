@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tip Calculator - Digitsolve</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header id="main-header"></header>
+
+    <nav class="breadcrumbs" aria-label="breadcrumb">
+        <div class="container"></div>
+    </nav>
+
+    <main class="container">
+        <section class="calc-page">
+            <h1>Tip Calculator</h1>
+            <p>Split the bill and calculate tips quickly and accurately.</p>
+
+            <form class="input-group">
+                <label>Bill Amount ($)</label>
+                <input type="number" id="bill" min="0" step="0.01" required>
+
+                <label>Tip Percentage (%)</label>
+                <input type="range" id="tip-percent" min="0" max="30" value="15" step="0.5">
+                <span id="tip-value">15%</span>
+
+                <label>Number of People</label>
+                <input type="number" id="people" min="1" max="20" value="1" required>
+
+                <button type="button" class="btn">Calculate Split</button>
+            </form>
+
+            <div id="result-box" class="result-box" style="display: none;">
+                <h3>Split Results</h3>
+                <div class="result-item">
+                    <strong>Tip Amount:</strong> <span id="tip-amount">-</span>
+                </div>
+                <div class="result-item">
+                    <strong>Total with Tip:</strong> <span id="total">-</span>
+                </div>
+                <div class="result-item">
+                    <strong>Amount per Person:</strong> <span id="per-person">-</span>
+                </div>
+                <button type="button" id="copy-results" class="btn btn-secondary">Copy Results</button>
+            </div>
+        </section>
+    </main>
+
+    <footer id="main-footer"></footer>
+
+    <script src="shared.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadHeader();
+            loadFooter();
+            renderBreadcrumbs(['tip']);
+
+            const tipSlider = document.getElementById('tip-percent');
+            const tipValue = document.getElementById('tip-value');
+            const form = document.querySelector('.input-group');
+            const resultBox = document.getElementById('result-box');
+            const copyBtn = document.getElementById('copy-results');
+
+            // Live tip percentage update
+            tipSlider.addEventListener('input', function() {
+                tipValue.textContent = this.value + '%';
+                if (!resultBox.style.display || resultBox.style.display === 'none') return;
+                calculateTip();
+            });
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                calculateTip();
+            });
+
+            copyBtn.addEventListener('click', function() {
+                const results = `Tip (${tipSlider.value}%): ${document.getElementById('tip-amount').textContent}\nTotal: ${document.getElementById('total').textContent}\nPer Person: ${document.getElementById('per-person').textContent}`;
+                copyToClipboard(results);
+            });
+
+            function calculateTip() {
+                const bill = parseFloat(document.getElementById('bill').value);
+                const tipPct = parseFloat(tipSlider.value) / 100;
+                const people = parseInt(document.getElementById('people').value);
+
+                if (isNaN(bill) || isNaN(people)) {
+                    return;
+                }
+
+                const tipAmount = bill * tipPct;
+                const total = bill + tipAmount;
+                const perPerson = total / people;
+
+                document.getElementById('tip-amount').textContent = formatNumber(tipAmount);
+                document.getElementById('total').textContent = formatNumber(total);
+                document.getElementById('per-person').textContent = formatNumber(perPerson);
+                resultBox.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

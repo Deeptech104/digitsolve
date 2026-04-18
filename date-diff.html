@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Date Difference Calculator - Digitsolve</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header id="main-header"></header>
+
+    <nav class="breadcrumbs" aria-label="breadcrumb">
+        <div class="container"></div>
+    </nav>
+
+    <main class="container">
+        <section class="calc-page">
+            <h1>Date Difference Calculator</h1>
+            <p>Calculate the exact difference between two dates in multiple units.</p>
+
+            <form class="input-group">
+                <label>Start Date</label>
+                <input type="date" id="start-date" required>
+
+                <label>End Date</label>
+                <input type="date" id="end-date" required>
+
+                <button type="button" class="btn">Calculate Difference</button>
+            </form>
+
+            <div id="result-box" class="result-box" style="display: none;">
+                <h3>Date Difference</h3>
+                <div class="result-item">
+                    <strong>Total Days:</strong> <span id="total-days">-</span>
+                </div>
+                <div class="result-item">
+                    <strong>Weeks:</strong> <span id="weeks">-</span>
+                </div>
+                <div class="result-item">
+                    <strong>Years:</strong> <span id="years">-</span> | <strong>Months:</strong> <span id="months">-</span> | <strong>Days:</strong> <span id="days">-</span>
+                </div>
+                <div class="result-item">
+                    <strong>Business Days (Mon-Fri):</strong> <span id="business-days">-</span>
+                </div>
+                <button type="button" id="copy-results" class="btn btn-secondary">Copy Results</button>
+            </div>
+        </section>
+    </main>
+
+    <footer id="main-footer"></footer>
+
+    <script src="shared.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadHeader();
+            loadFooter();
+            renderBreadcrumbs(['date-diff']);
+
+            // Set defaults
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('start-date').value = '2023-01-01';
+            document.getElementById('end-date').value = today;
+
+            const form = document.querySelector('.input-group');
+            const resultBox = document.getElementById('result-box');
+            const copyBtn = document.getElementById('copy-results');
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                calculateDateDiff();
+            });
+
+            copyBtn.addEventListener('click', function() {
+                copyToClipboard(`Days between ${document.getElementById('start-date').value} and ${document.getElementById('end-date').value}:\n${document.getElementById('total-days').textContent} days (${document.getElementById('years').textContent}y ${document.getElementById('months').textContent}m ${document.getElementById('days').textContent}d)`);
+            });
+
+            function calculateDateDiff() {
+                const start = new Date(document.getElementById('start-date').value);
+                const end = new Date(document.getElementById('end-date').value);
+
+                if (isNaN(start) || isNaN(end)) {
+                    alert('Please enter valid dates.');
+                    return;
+                }
+
+                const diffTime = Math.abs(end - start);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                
+                // Years, months, days approximation
+                const years = Math.floor(diffDays / 365.25);
+                const months = Math.floor((diffDays % 365.25) / 30.4375);
+                const days = Math.floor((diffDays % 365.25) % 30.4375);
+
+                // Business days (rough estimate: 5/7 weekdays)
+                const businessDays = Math.round(diffDays * 5 / 7);
+
+                document.getElementById('total-days').textContent = diffDays.toLocaleString();
+                document.getElementById('weeks').textContent = Math.round(diffDays / 7);
+                document.getElementById('years').textContent = years;
+                document.getElementById('months').textContent = months;
+                document.getElementById('days').textContent = days;
+                document.getElementById('business-days').textContent = businessDays.toLocaleString();
+                resultBox.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

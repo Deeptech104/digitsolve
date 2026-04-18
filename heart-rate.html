@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Max Heart Rate Calculator - Digitsolve</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header id="main-header"></header>
+
+    <nav class="breadcrumbs" aria-label="breadcrumb">
+        <div class="container"></div>
+    </nav>
+
+    <main class="container">
+        <section class="calc-page">
+            <h1>Maximum Heart Rate Calculator</h1>
+            <p>Calculate your target heart rate zones for exercise.</p>
+
+            <form class="input-group">
+                <label>Age (years)</label>
+                <input type="number" id="age" min="10" max="110" required>
+
+                <label>Formula</label>
+                <select id="formula">
+                    <option value="220">Traditional (220 - Age)</option>
+                    <option value="208">Tanaka (208 - 0.7 × Age)</option>
+                    <option value="206.9">HUNT (206.9 - 0.67 × Age)</option>
+                </select>
+
+                <button type="button" class="btn">Calculate Heart Rate Zones</button>
+            </form>
+
+            <div id="result-box" class="result-box" style="display: none;">
+                <h3>Heart Rate Zones</h3>
+                <div class="result-item">
+                    <strong>Maximum Heart Rate:</strong> <span id="max-hr">-</span> bpm
+                </div>
+                <div class="result-item">
+                    <strong>Zone 1 (50-60%):</strong> <span id="zone1">-</span> bpm
+                </div>
+                <div class="result-item">
+                    <strong>Zone 2 (60-70%):</strong> <span id="zone2">-</span> bpm  
+                </div>
+                <div class="result-item">
+                    <strong>Zone 3 (70-80%):</strong> <span id="zone3">-</span> bpm
+                </div>
+                <div class="result-item">
+                    <strong>Zone 4 (80-90%):</strong> <span id="zone4">-</span> bpm
+                </div>
+                <div class="result-item">
+                    <strong>Zone 5 (90-100%):</strong> <span id="zone5">-</span> bpm
+                </div>
+                <button type="button" id="copy-results" class="btn btn-secondary">Copy Results</button>
+            </div>
+        </section>
+    </main>
+
+    <footer id="main-footer"></footer>
+
+    <script src="shared.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadHeader();
+            loadFooter();
+            renderBreadcrumbs(['heart-rate']);
+
+            const form = document.querySelector('.input-group');
+            const resultBox = document.getElementById('result-box');
+            const copyBtn = document.getElementById('copy-results');
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                calculateHeartRate();
+            });
+
+            copyBtn.addEventListener('click', function() {
+                let results = `Max HR: ${document.getElementById('max-hr').textContent} bpm\n`;
+                ['zone1','zone2','zone3','zone4','zone5'].forEach(z => {
+                    results += document.getElementById(z).textContent + '\n';
+                });
+                copyToClipboard(results);
+            });
+
+            function calculateHeartRate() {
+                const age = parseInt(document.getElementById('age').value);
+                const formulaValue = parseFloat(document.getElementById('formula').value);
+                
+                if (isNaN(age)) {
+                    alert('Please enter your age.');
+                    return;
+                }
+
+                let maxHR;
+                if (formulaValue === 220) {
+                    maxHR = 220 - age;
+                } else if (formulaValue === 208) {
+                    maxHR = 208 - (0.7 * age);
+                } else {
+                    maxHR = 206.9 - (0.67 * age);
+                }
+
+                const zones = {
+                    zone1: {min: 0.50, max: 0.60},
+                    zone2: {min: 0.60, max: 0.70},
+                    zone3: {min: 0.70, max: 0.80},
+                    zone4: {min: 0.80, max: 0.90},
+                    zone5: {min: 0.90, max: 1.00}
+                };
+
+                document.getElementById('max-hr').textContent = Math.round(maxHR);
+
+                Object.keys(zones).forEach(zone => {
+                    const minBpm = Math.round(maxHR * zones[zone].min);
+                    const maxBpm = Math.round(maxHR * zones[zone].max);
+                    document.getElementById(zone).textContent = `${minBpm}-${maxBpm}`;
+                });
+
+                resultBox.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

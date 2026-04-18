@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Converter - Digitsolve</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header id="main-header"></header>
+
+    <nav class="breadcrumbs" aria-label="breadcrumb">
+        <div class="container"></div>
+    </nav>
+
+    <main class="container">
+        <section class="calc-page">
+            <h1>Case Converter</h1>
+            <p>Convert text between multiple case formats instantly.</p>
+
+            <div class="input-group">
+                <label>Enter text:</label>
+                <textarea id="input-text" rows="6" placeholder="Paste text here..."></textarea>
+
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0;">
+                    <button type="button" class="case-btn" data-case="upper">UPPERCASE</button>
+                    <button type="button" class="case-btn" data-case="lower">lowercase</button>
+                    <button type="button" class="case-btn" data-case="title">Title Case</button>
+                    <button type="button" class="case-btn" data-case="sentence">Sentence case</button>
+                    <button type="button" class="case-btn" data-case="camel">camelCase</button>
+                    <button type="button" class="case-btn" data-case="pascal">PascalCase</button>
+                    <button type="button" class="case-btn" data-case="snake">snake_case</button>
+                    <button type="button" class="case-btn" data-case="kebab">kebab-case</button>
+                </div>
+
+                <div style="display: flex; gap: 1rem;">
+                    <button type="button" id="copy-output" class="btn btn-secondary">Copy Output</button>
+                    <button type="button" id="clear-text" class="btn btn-secondary">Clear</button>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Output:</label>
+                <textarea id="output-text" rows="6" readonly placeholder="Converted text appears here..."></textarea>
+            </div>
+        </section>
+    </main>
+
+    <footer id="main-footer"></footer>
+
+    <script src="shared.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadHeader();
+            loadFooter();
+            renderBreadcrumbs(['case-converter']);
+
+            const inputText = document.getElementById('input-text');
+            const outputText = document.getElementById('output-text');
+            const caseBtns = document.querySelectorAll('.case-btn');
+            const copyBtn = document.getElementById('copy-output');
+            const clearBtn = document.getElementById('clear-text');
+
+            // Live conversion
+            inputText.addEventListener('input', convertCase);
+            caseBtns.forEach(btn => btn.addEventListener('click', function() {
+                this.classList.add('active');
+                setTimeout(() => this.classList.remove('active'), 200);
+                convertCase();
+            }));
+            copyBtn.addEventListener('click', copyOutput);
+            clearBtn.addEventListener('click', clearText);
+
+            function convertCase() {
+                const text = inputText.value;
+                const selectedCase = document.querySelector('.case-btn.active')?.dataset.case || 'lower';
+                outputText.value = convertToCase(text, selectedCase);
+            }
+
+            function convertToCase(text, caseType) {
+                if (!text) return '';
+
+                switch(caseType) {
+                    case 'upper': return text.toUpperCase();
+                    case 'lower': return text.toLowerCase();
+                    case 'title': 
+                        return text.toLowerCase().replace(/(?:^|\s+)\w/g, match => match.toUpperCase());
+                    case 'sentence':
+                        return text.toLowerCase().replace(/([.?!]\s*)([a-z])/g, (m, p1, p2) => p1 + p2.toUpperCase());
+                    case 'camel':
+                        return text.trim().toLowerCase().replace(/[-_\s]+(.)?/g, (match, c) => c ? c.toUpperCase() : '');
+                    case 'pascal':
+                        return text.trim().toLowerCase().replace(/[-_\s]+(.)?/g, (match, c) => c.toUpperCase());
+                    case 'snake':
+                        return text.trim().toLowerCase().replace(/[-_\s]+/g, '_');
+                    case 'kebab':
+                        return text.trim().toLowerCase().replace(/[-_\s]+/g, '-');
+                    default: return text.toLowerCase();
+                }
+            }
+
+            function copyOutput() {
+                copyToClipboard(outputText.value);
+            }
+
+            function clearText() {
+                inputText.value = '';
+                outputText.value = '';
+                document.querySelector('.case-btn')?.classList.remove('active');
+            }
+        });
+    </script>
+    
+    <style>
+        .case-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--gray-300);
+            background: white;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        .case-btn:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+        .case-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+    </style>
+</body>
+</html>

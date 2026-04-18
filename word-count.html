@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Counter - Digitsolve</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header id="main-header"></header>
+
+    <nav class="breadcrumbs" aria-label="breadcrumb">
+        <div class="container"></div>
+    </nav>
+
+    <main class="container">
+        <section class="calc-page">
+            <h1>Word Counter & Text Statistics</h1>
+            <p>Count words, characters, sentences, and analyze your text instantly.</p>
+
+            <div class="input-group">
+                <label>Paste your text here:</label>
+                <textarea id="text-input" rows="10" placeholder="Enter text to analyze..."></textarea>
+                <button type="button" class="btn" style="margin-top: 1rem;">Analyze Text</button>
+            </div>
+
+            <div id="result-box" class="result-box" style="display: none;">
+                <h3>Text Statistics</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                    <div class="result-item">
+                        <strong>Characters:</strong> <span id="chars">-</span>
+                    </div>
+                    <div class="result-item">
+                        <strong>Characters (no spaces):</strong> <span id="chars-no-spaces">-</span>
+                    </div>
+                    <div class="result-item">
+                        <strong>Words:</strong> <span id="words">-</span>
+                    </div>
+                    <div class="result-item">
+                        <strong>Sentences:</strong> <span id="sentences">-</span>
+                    </div>
+                    <div class="result-item">
+                        <strong>Paragraphs:</strong> <span id="paragraphs">-</span>
+                    </div>
+                    <div class="result-item">
+                        <strong>Reading Time:</strong> <span id="reading-time">-</span> min
+                    </div>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button type="button" id="clear-text" class="btn btn-secondary">Clear</button>
+                    <button type="button" id="copy-stats" class="btn btn-secondary">Copy Stats</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="main-footer"></footer>
+
+    <script src="shared.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadHeader();
+            loadFooter();
+            renderBreadcrumbs(['word-count']);
+
+            const textInput = document.getElementById('text-input');
+            const resultBox = document.getElementById('result-box');
+            const analyzeBtn = document.querySelector('.input-group .btn');
+            const clearBtn = document.getElementById('clear-text');
+            const copyBtn = document.getElementById('copy-stats');
+
+            // Live analysis
+            textInput.addEventListener('input', analyzeText);
+            analyzeBtn.addEventListener('click', analyzeText);
+            clearBtn.addEventListener('click', clearText);
+            copyBtn.addEventListener('click', copyStats);
+
+            function analyzeText() {
+                const text = textInput.value;
+                if (!text.trim()) {
+                    resultBox.style.display = 'none';
+                    return;
+                }
+
+                const chars = text.length;
+                const charsNoSpaces = text.replace(/\s/g, '').length;
+                const words = text.trim().split(/\s+/).filter(w => w.length > 0).length;
+                const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0).length;
+                const paragraphs = text.split(/\n\s*\n/).length;
+                const readingTime = Math.ceil(words / 225); // Average reading speed 225 wpm
+
+                document.getElementById('chars').textContent = chars.toLocaleString();
+                document.getElementById('chars-no-spaces').textContent = charsNoSpaces.toLocaleString();
+                document.getElementById('words').textContent = words.toLocaleString();
+                document.getElementById('sentences').textContent = sentences.toLocaleString();
+                document.getElementById('paragraphs').textContent = paragraphs.toLocaleString();
+                document.getElementById('reading-time').textContent = readingTime;
+                resultBox.style.display = 'block';
+            }
+
+            function clearText() {
+                textInput.value = '';
+                resultBox.style.display = 'none';
+                textInput.focus();
+            }
+
+            function copyStats() {
+                const stats = `Words: ${document.getElementById('words').textContent}\nCharacters: ${document.getElementById('chars').textContent}\nSentences: ${document.getElementById('sentences').textContent}\nReading Time: ${document.getElementById('reading-time').textContent} min`;
+                copyToClipboard(stats);
+            }
+        });
+    </script>
+</body>
+</html>
